@@ -1,0 +1,78 @@
+# Конфигурация источников для мониторинга
+#
+# Формат:
+#   - type: тип платформы (telegram или vk)
+#     url: URL канала/группы
+#     enabled: активен ли источник (true/false)
+
+sources:
+  # Примеры Telegram каналов
+  - type: telegram
+    url: https://t.me/example_channel
+    enabled: false
+
+  - type: telegram
+    url: https://t.me/another_channel
+    enabled: false
+
+  # Примеры VK сообществ
+  - type: vk
+    url: https://vk.com/public123456
+    enabled: false
+
+  - type: vk
+    url: https://vk.com/club789012
+    enabled: false
+
+# Инструкции:
+# 1. Замените примеры на реальные URL каналов/групп
+# 2. Установите enabled: true для источников, которые хотите мониторить
+# 3. Перезапустите бота после изменений
+
+  - type: telegram
+    url: https://t.me/thedankestmemes
+    enabled: true
+
+  - type: telegram
+    url: https://t.me/data_secrets
+    enabled: true
+
+  - type: vk
+    url: https://vk.com/mzchoff
+    enabled: true
+
+  - type: vk
+    url: https://vk.com/pieceofpixel
+    enabled: true
+
+  - type: telegram
+    url: https://t.me/dvachannel
+    enabled: true
+
+  - type: telegram
+    url: https://t.me/ru2ch
+    enabled: true
+
+  - type: telegram
+    url: https://t.me/rand2ch
+    enabled: true
+
+  - type: telegram
+    url: https://t.me/dobro_2ch
+    enabled: true
+
+  - type: vk
+    url: https://vk.com/okrisahnejno
+    enabled: true
+
+  - type: vk
+    url: https://vk.com/work_meme
+    enabled: true
+
+  - type: telegram
+    url: https://t.me/asdcvbghj
+    enabled: true
+
+  - type: vk
+    url: https://vk.com/qlsdgkgbd
+    enabled: true
