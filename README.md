@@ -20,7 +20,7 @@
 
 ```bash
 # Клонируйте репозиторий
-git clone <your-repo>
+git clone https://github.com/yourdisenchantment/content-aggregator-bot
 cd content-aggregator-bot
 
 # Установите зависимости с помощью uv
