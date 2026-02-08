@@ -18,9 +18,12 @@ class TelegramPublisher:
 
     async def initialize(self) -> None:
         self.bot = Bot(token=settings.telegram_bot_token)
-        logger.info("Публикатор готов")
+        logger.info("✅ Публикатор готов")
 
-    def _get_input_file(self, media_url: str):
+    def _get_input_file(self, media_url: str | None):
+        if not media_url:
+            raise ValueError("Media URL не может быть None")
+
         if os.path.exists(media_url):
             return FSInputFile(media_url)
         return media_url
@@ -47,15 +50,12 @@ class TelegramPublisher:
                 msg = await self.bot.send_message(
                     self.target_chat_id,
                     text=final_caption,
-                    disable_web_page_preview=True,  # Чтобы не было превью ссылки-источника
+                    disable_web_page_preview=True,
                 )
                 return msg.message_id
 
             if len(post.media) == 1:
                 m = post.media[0]
-                # Аргумент типа "str | None" нельзя присвоить параметру "media_url" типа "str" в функции "_get_input_file"
-                #   "str | None" типа невозможно назначить тип "str"
-                #       "None" невозможно назначить "str"
                 file = self._get_input_file(m.url)
 
                 if m.type == MediaType.PHOTO:
@@ -70,14 +70,20 @@ class TelegramPublisher:
                     msg = await self.bot.send_document(
                         self.target_chat_id, document=file, caption=final_caption
                     )
+
+                # Очистка медиа файла после публикации
+                if m.url and os.path.exists(m.url):
+                    try:
+                        os.remove(m.url)
+                        logger.debug(f"🗑️ Удален временный файл: {m.url}")
+                    except Exception as e:
+                        logger.warning(f"⚠️ Не удалось удалить файл {m.url}: {e}")
+
                 return msg.message_id
 
             else:
                 media_group = []
                 for i, m in enumerate(post.media[:10]):
-                    # Аргумент типа "str | None" нельзя присвоить параметру "media_url" типа "str" в функции "_get_input_file"
-                    #   "str | None" типа невозможно назначить тип "str"
-                    #       "None" невозможно назначить "str"
                     file = self._get_input_file(m.url)
                     cap = final_caption if i == 0 else None
 
@@ -89,16 +95,27 @@ class TelegramPublisher:
                 msgs = await self.bot.send_media_group(
                     self.target_chat_id, media=media_group
                 )
+
+                # Очистка всех медиа файлов
+                for m in post.media:
+                    if m.url and os.path.exists(m.url):
+                        try:
+                            os.remove(m.url)
+                            logger.debug(f"🗑️ Удален временный файл: {m.url}")
+                        except Exception as e:
+                            logger.warning(f"⚠️ Не удалось удалить файл {m.url}: {e}")
+
                 return msgs[0].message_id
 
         except TelegramRetryAfter as e:
-            logger.warning(f"Flood limit. Ждем {e.retry_after}с")
+            logger.warning(f"⏳ Flood limit. Ждем {e.retry_after}с")
             await asyncio.sleep(e.retry_after)
             return await self.publish_post(post)
         except Exception as e:
-            logger.error(f"Ошибка публикации: {e}")
+            logger.error(f"❌ Ошибка публикации: {e}")
             raise
 
     async def close(self) -> None:
         if self.bot:
             await self.bot.session.close()
+            logger.debug("🔒 Публикатор закрыт")

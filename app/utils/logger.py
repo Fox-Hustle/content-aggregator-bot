@@ -1,19 +1,25 @@
 # app/utils/logger.py
 
 import sys
-
+from pathlib import Path
 from loguru import logger
-
 from app.config import settings
 
 
-def setup_logger() -> None:
+class LogLevel:
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+    INFO = "INFO"
+    DEBUG = "DEBUG"
+
+
+def setup_logger(console_level: str | None = None, file_enabled: bool = True) -> None:
     logger.remove()
+    effective_console_level = console_level or settings.log_level
 
     console_format = (
-        "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
-        "<level>{level: <8}</level> | "
-        "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
+        "<green>{time:HH:mm:ss}</green> | "
+        "<level>{level: <7}</level> | "
         "<level>{message}</level>"
     )
 
@@ -27,27 +33,27 @@ def setup_logger() -> None:
     logger.add(
         sys.stderr,
         format=console_format,
-        level=settings.log_level,
+        level=effective_console_level,
         colorize=True,
-        backtrace=True,
-        diagnose=True,
+        backtrace=False,
+        diagnose=False,
     )
 
-    logger.add(
-        settings.log_file,
-        format=file_format,
-        level=settings.log_level,
-        rotation="10 MB",
-        retention="1 week",
-        compression="zip",
-        backtrace=True,
-        diagnose=True,
-        encoding="utf-8",
-    )
+    if file_enabled:
+        log_path = Path(settings.log_file)
+        log_path.parent.mkdir(parents=True, exist_ok=True)
 
-    logger.info("Система логирования инициализирована")
-    logger.debug(f"Уровень логирования: {settings.log_level}")
-    logger.debug(f"Файл логов: {settings.log_file}")
+        logger.add(
+            settings.log_file,
+            format=file_format,
+            level="DEBUG",
+            rotation="10 MB",
+            retention="1 week",
+            compression="zip",
+            backtrace=True,
+            diagnose=True,
+            encoding="utf-8",
+        )
 
 
-__all__ = ["logger", "setup_logger"]
+__all__ = ["logger", "setup_logger", "LogLevel"]
