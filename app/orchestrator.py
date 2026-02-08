@@ -30,7 +30,6 @@ class Orchestrator:
         self.publisher = TelegramPublisher()
         self.scrapers: list[BaseScraper] = []
         self.running = False
-        # Запоминаем время запуска (в UTC, так как Telegram отдает время в UTC)
         self.start_time = datetime.now(timezone.utc)
 
     async def initialize(self) -> None:
@@ -72,7 +71,6 @@ class Orchestrator:
             logger.error(f"Ошибка конфига: {e}")
 
     def _create_example_config(self, path: Path) -> None:
-        # (Код создания конфига пропущен для краткости, он есть в оригинале)
         pass
 
     async def run(self) -> None:
@@ -96,7 +94,6 @@ class Orchestrator:
     async def _scrape_and_publish_cycle(self) -> None:
         logger.info("=== Сбор данных ===")
 
-        # Собираем данные (с ограничением в 2 поста для скорости, можно вернуть 10)
         scrape_tasks = [
             scraper.scrape(limit=1, since_time=self.start_time)
             for scraper in self.scrapers
@@ -115,16 +112,12 @@ class Orchestrator:
         skipped_old_count = 0
 
         for post in all_posts:
-            # 1. Проверка на дубликаты в БД
             if await self.repository.is_post_processed(post.content_hash):
                 continue
 
-            # Сохраняем как "обработанный"
             await self.repository.mark_post_processed(post)
             new_count += 1
 
-            # 2. ФИЛЬТР: Если пост старый (создан до запуска бота)
-            # Приводим дату поста к UTC для корректного сравнения
             post_date = post.created_at
             if post_date.tzinfo is None:
                 post_date = post_date.replace(tzinfo=timezone.utc)
@@ -134,7 +127,6 @@ class Orchestrator:
                 skipped_old_count += 1
                 continue
 
-            # 3. Если пост новый - публикуем
             logger.info(
                 f"НОВЫЙ ПОСТ: {post.url}. Публикация через {settings.post_check_delay_seconds}с..."
             )

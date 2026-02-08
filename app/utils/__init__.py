@@ -1,7 +1,5 @@
 # app/utils/__init__.py
 
-"""Утилиты и вспомогательные функции."""
-
 from app.utils.logger import logger, setup_logger
 from app.utils.rate_limiter import AdaptiveRateLimiter, RateLimiter
 from app.utils.validators import (

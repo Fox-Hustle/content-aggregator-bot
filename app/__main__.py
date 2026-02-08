@@ -1,7 +1,5 @@
 # app/__main__.py
 
-"""Точка входа приложения."""
-
 import asyncio
 
 from app.orchestrator import Orchestrator
@@ -9,15 +7,12 @@ from app.utils.logger import logger, setup_logger
 
 
 async def main() -> None:
-    """Главная функция приложения."""
-    # Настройка логирования
     setup_logger()
 
     logger.info("=" * 60)
     logger.info("Запуск Content Aggregator Bot")
     logger.info("=" * 60)
 
-    # Создание и запуск оркестратора
     orchestrator = Orchestrator()
 
     try:
@@ -36,8 +31,6 @@ async def main() -> None:
 
 
 def run_main():
-    """Синхронная обертка для запуска async main (для entry points)"""
-
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

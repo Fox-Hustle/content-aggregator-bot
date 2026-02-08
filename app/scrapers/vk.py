@@ -31,6 +31,7 @@ class VKScraper(BaseScraper):
             await self.initialize()
         posts = []
         try:
+            # "wall" не является известным атрибутом "None"
             response = self.vk.wall.get(
                 domain=self.group_id,
                 count=limit,
@@ -40,13 +41,11 @@ class VKScraper(BaseScraper):
             items = response.get("items", [])
 
             for item in items:
-                # === ОПТИМИЗАЦИЯ ===
                 if since_time:
                     timestamp = item.get("date", 0)
                     post_date = datetime.fromtimestamp(timestamp, tz=timezone.utc)
                     if post_date < since_time:
-                        continue  # Или break, если уверены в сортировке VK
-                # ===================
+                        continue
 
                 post = self._parse_post(item)
                 if post:
@@ -57,19 +56,6 @@ class VKScraper(BaseScraper):
         return posts
 
     def _parse_post(self, item: dict) -> Post | None:
-        # (Код парсинга остается без изменений, скопируйте его из предыдущей версии или исходника)
-        # Для краткости я его здесь не дублирую, так как меняем только fetch_recent_posts
-        try:
-            # ... (старый код парсинга)
-            # Вставьте сюда содержимое метода _parse_post из вашего текущего файла
-            # Если нужно - я могу прислать полный код файла
-            pass
-        except:
-            return None
-        # ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ ПРИМЕРА - НЕ КОПИРУЙТЕ МЕТОД _parse_post ПУСТЫМ!
-        # Используйте старый _parse_post.
-
-        # --- ВОССТАНОВЛЕНИЕ _parse_post (на всякий случай) ---
         try:
             post_id = str(item.get("id"))
             owner_id = item.get("owner_id")
@@ -101,6 +87,9 @@ class VKScraper(BaseScraper):
 
             return Post(
                 platform=PlatformType.VK,
+                # Аргумент типа "str | None" нельзя присвоить параметру "source_id" типа "str" в функции "__init__"
+                #   "str | None" типа невозможно назначить тип "str"
+                #       "None" невозможно назначить "str"
                 source_id=self.group_id,
                 post_id=post_id,
                 text=text,
@@ -109,6 +98,7 @@ class VKScraper(BaseScraper):
                 created_at=created_at,
                 content_hash=content_hash,
             )
+        # Do not use bare `except`
         except:
             return None
 

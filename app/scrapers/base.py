@@ -22,7 +22,6 @@ class BaseScraper(ABC):
         pass
 
     @abstractmethod
-    # Добавляем аргумент since_time
     async def fetch_recent_posts(
         self, limit: int = 10, since_time: datetime | None = None
     ) -> list[Post]:
@@ -40,7 +39,6 @@ class BaseScraper(ABC):
                 await self.initialize()
                 self._initialized = True
 
-            # Передаем since_time внутрь
             posts = await self.fetch_recent_posts(limit, since_time)
             await self.rate_limiter.reset_errors()
             return posts
