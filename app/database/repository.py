@@ -35,7 +35,7 @@ class PostRepository:
     async def mark_post_processed(self, post: Post) -> ProcessedPost:
         async with self.session_factory() as session:
             db_post = ProcessedPost(
-                platform=post.platform.value,
+                platform=str(post.platform),
                 source_id=post.source_id,
                 post_id=post.post_id,
                 content_hash=post.content_hash,
