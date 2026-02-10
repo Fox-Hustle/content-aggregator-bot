@@ -232,16 +232,11 @@ Key variables for Docker deployment:
 docker build -t content-aggregator-bot:latest .
 ```
 
-### Build with Different Python Version
-
-```bash
-docker build --build-arg PYTHON_VERSION=3.13 -t content-aggregator-bot:py313 .
-```
-
 ### Multi-Platform Build
 
 ```bash
 docker buildx build --platform linux/amd64,linux/arm64 -t content-aggregator-bot:latest .
+```
 ```
 
 ## 📊 Resource Limits
