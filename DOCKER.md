@@ -16,7 +16,7 @@ This guide covers how to run the Content Aggregator Bot using Docker and Docker 
 1. **Prepare configuration files:**
 ```bash
 # Copy environment template
-cp .env.example .env
+cp env.example .env
 
 # Edit .env with your credentials
 nano .env

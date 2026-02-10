@@ -48,9 +48,11 @@ Dockerfile*
 docker-compose*.yml
 .dockerignore
 
-# Documentation
-*.md
-!README.md
+# Documentation (keep README.md for build)
+QUICKSTART.md
+SETUP_TELEGRAM.md
+SETUP_VK.md
+DOCKER.md
 
 # CI/CD
 .github/

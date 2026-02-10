@@ -77,7 +77,7 @@ uv run python -m app
 
 ```bash
 # 1. Подготовьте конфигурацию
-cp .env.example .env
+cp env.example .env
 nano .env  # Заполните необходимые токены
 
 # 2. Настройте источники
