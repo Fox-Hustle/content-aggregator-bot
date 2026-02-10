@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: content-aggregator-bot-dev
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      - LOG_LEVEL=DEBUG
+    volumes:
+      # Mount source code for live editing
+      - ./app:/app/app
+      - ./config:/app/config
+      # Persist database
+      - ./data:/app/data
+      # Persist logs
+      - ./logs:/app/logs
+      # Persist Telegram session files
+      - bot-sessions-dev:/app
+    networks:
+      - bot-network-dev
+    command: python -m app -v
+    stdin_open: true
+    tty: true
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  bot-network-dev:
+    driver: bridge
+
+volumes:
+  bot-sessions-dev:
